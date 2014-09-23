@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """A Tiny CSV reader that covers most use cases. Aims to be easy to use,
-pure python and usable for most csv files in use today.
+pure python and support most common forms of csv though it currently supports
+the one's I need :).
 """
 
 from __future__ import absolute_import, print_function, unicode_literals
@@ -19,16 +20,23 @@ class LineReader(object):
 
     def __iter__(self):
         """TODO: Add fancy stuff later,
-        like raising exceptions on suspicious stuff.
+        like raising exceptions on suspicious stuff (very super long lines)
         """
         return iter(self.file_obj)
 
 
 class Dialect(object):
-    """A CSV dialect, this one also serves as the default. How Pythonic..."""
+    """A CSV dialect with a sensible default configuration"""
     quote = '"'
     separator = ","
-    escape_char = '\\'
+    escape = '\\'
+    newline = '\n'
+
+    def __init__(self, separator=None, quote=None, escape=None, newline=None):
+        self.separator = separator if separator else self.separator
+        self.quote = quote if quote else self.quote
+        self.escape = escape if escape else self.escape
+        self.newline = newline if newline else self.newline
 
     def parse_line(self, line, line_number=None):
         log.debug("Parsing line: '%s'", line)
@@ -47,7 +55,7 @@ class Dialect(object):
                 in_quote = not in_quote
 
             # Escaping
-            elif c == self.escape_char:
+            elif c == self.escape:
                 escaped = True if not escaped else False
                 continue # prevent escaped from being unset at end of loop
 
