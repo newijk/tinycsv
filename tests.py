@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 dialects_configurations = [
     # separator # quote     # escape    # line separator
     (',',       "'",        "\\",       "\n"),
+    (',',       '"',        "\\",       "\n"),
 ]
 
 
