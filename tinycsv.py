@@ -81,8 +81,6 @@ class Dialect(object):
                             line_number or 'unknown', ix, c, ord(c)))
                 buffer += [c, ]
 
-            # escaped = False
-
         if buffer:
             raise Exception("Buffer not empty, it contains {}".format(buffer))
 
