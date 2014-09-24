@@ -39,11 +39,9 @@ class Dialect(object):
         self.newline = self.newline if newline is None else newline
 
     def parse_line(self, line, line_number=None):
-        log.debug("Parsing line: '%s'", line)
-
         fields = ()
         escaped = False
-        in_quote = False
+        in_quote = False if self.quote else True
         buffer = []
 
         if not line.endswith('\n'):
@@ -51,7 +49,11 @@ class Dialect(object):
 
         for ix, c in enumerate(line):
             # Quoting
-            if c == self.quote and not escaped:
+            if escaped:
+                buffer += [c, ]
+                escaped = False
+
+            elif c == self.quote:
                 in_quote = not in_quote
 
             # Escaping
@@ -60,7 +62,7 @@ class Dialect(object):
                 continue # prevent escaped from being unset at end of loop
 
             # Field separation or EOL
-            elif c in [self.separator, '\n'] and not in_quote:
+            elif c in [self.separator, '\n'] and (self.quote and not in_quote or not self.quote):
                 # Field done, push the current buffer onto fields
                 fields = fields + (''.join(buffer), )
                 buffer = []
@@ -78,7 +80,10 @@ class Dialect(object):
                             line_number or 'unknown', ix, c, ord(c)))
                 buffer += [c, ]
 
-            escaped = False
+            # escaped = False
+
+        if buffer:
+            raise Exception("Buffer not empty, it contains {}".format(buffer))
 
         return fields
 
