@@ -33,10 +33,10 @@ class Dialect(object):
     newline = '\n'
 
     def __init__(self, separator=None, quote=None, escape=None, newline=None):
-        self.separator = separator if separator else self.separator
-        self.quote = quote if quote else self.quote
-        self.escape = escape if escape else self.escape
-        self.newline = newline if newline else self.newline
+        self.separator = self.separator if separator is None else separator
+        self.quote = self.quote if quote is None else quote
+        self.escape = self.escape if escape is None else escape
+        self.newline = self.newline if newline is None else newline
 
     def parse_line(self, line, line_number=None):
         log.debug("Parsing line: '%s'", line)

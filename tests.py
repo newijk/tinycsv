@@ -13,10 +13,12 @@ import tinycsv
 log = logging.getLogger(__name__)
 
 # Some possible dialects for testing
-dialects_configurations = [
-    # separator # quote     # escape    # line separator
-    (',',       "'",        "\\",       "\n"),
-    (',',       '"',        "\\",       "\n"),
+dialect_configurations = [
+    # separator # quote     # escape    # newline
+    (',',       "'",        "\\",       "\n"), # 0
+    (',',       '"',        "\\",       "\n"), # 1
+    (',',       "",         "\\",       "\n"), # 2
+    ('\t',      "'",        "\\",       "\n"), # 3
 ]
 
 
@@ -67,37 +69,20 @@ def tests_for_dialect(separator, quote, escape, newline):
     return tests
 
 
-class TestDialect(TestCase):
-
+# Generate a test for each dialect listed.
+_test_template = '''
+class TestDialect{ix}(TestCase):
     def test_dialects(self):
-        for ix, dialect_configuration in enumerate(dialects_configurations):
-            dialect = tinycsv.Dialect(*dialect_configuration)
-            tests = tests_for_dialect(*dialect_configuration)
-            for test in tests:
-                result = dialect.parse_line(test['test'])
-                self.assertEqual(result, test['expect'])
+        dialect_configuration = dialect_configurations[{ix}]
+        dialect = tinycsv.Dialect(*dialect_configuration)
+        tests = tests_for_dialect(*dialect_configuration)
+        for test in tests:
+            result = dialect.parse_line(test['test'])
+            self.assertEqual(result, test['expect'])
+'''
 
-
-    def test_basic_read(self):
-        dialect = tinycsv.Dialect()
-        self.assertEqual(
-            dialect.parse_line('"field1","field2"'),
-            ('field1', 'field2'),
-        )
-
-    def test_read_with_escaped_quote(self):
-        dialect = tinycsv.Dialect()
-        self.assertEqual(
-            dialect.parse_line(r'"item\"1","item2"'),
-            ('item"1', 'item2'),
-        )
-
-    def test_read_with_quoted_separator(self):
-        dialect = tinycsv.Dialect()
-        self.assertEqual(
-            dialect.parse_line('",item0","item,1","item2,"'),
-            (',item0', 'item,1', 'item2,')
-        )
+for ix, dialects_configuration in enumerate(dialect_configurations):
+    exec(_test_template.format(ix=ix), globals(), locals())
 
 
 class TestTinyCsv(TestCase):
