@@ -48,11 +48,12 @@ class Dialect(object):
             line = "{}\n".format(line)
 
         for ix, c in enumerate(line):
-            # Quoting
+            # Escaped chars
             if escaped:
                 buffer += [c, ]
                 escaped = False
 
+            # Quoting
             elif c == self.quote:
                 in_quote = not in_quote
 
