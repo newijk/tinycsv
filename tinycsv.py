@@ -44,8 +44,8 @@ class Dialect(object):
         in_quote = False if self.quote else True
         buffer = []
 
-        if not line.endswith('\n'):
-            line = "{}\n".format(line)
+        if not line.endswith(self.newline):
+            line = "{}{}".format(line, self.newline)
 
         for ix, c in enumerate(line):
             # Escaped chars
@@ -106,9 +106,4 @@ class CsvReader(object):
                 pass  # Empty line
             else:
                 yield self.dialect.parse_line(line, line_number=line_number)
-
-
-
-
-
-
+                
