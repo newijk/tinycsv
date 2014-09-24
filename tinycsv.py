@@ -63,7 +63,8 @@ class Dialect(object):
                 continue # prevent escaped from being unset at end of loop
 
             # Field separation or EOL
-            elif c in [self.separator, '\n'] and (self.quote and not in_quote or not self.quote):
+            elif c in [self.separator, '\n'] \
+                    and (self.quote and not in_quote or not self.quote):
                 # Field done, push the current buffer onto fields
                 fields = fields + (''.join(buffer), )
                 buffer = []
