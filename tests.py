@@ -56,7 +56,7 @@ def tests_for_dialect(separator, quote, escape, newline):
             'test': "{q}{e}{s}field1{q}{s}"
                     "{q}fie{e}{s}ld2{q}{s}"
                     "{q}field3{e}{s}{q}{n}",
-            'expect': ("{q}field1", "fie{q}ld2", "field3{q}"),
+            'expect': ("{s}field1", "fie{s}ld2", "field3{s}"),
         }]
 
     tests = []
